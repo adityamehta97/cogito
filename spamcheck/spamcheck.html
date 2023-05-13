@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Checker</title>
+    <style>
+        .urgency { background-color: yellow; }
+        .shady { background-color: pink; }
+        .money { background-color: lightgreen; }
+        .overpromise { background-color: lightblue; }
+    </style>
+</head>
+<body>
+    <h1>Spam Checker</h1>
+    <p>Paste your email text below:</p>
+    <textarea id="emailText" rows="10" cols="50"></textarea>
+    <br>
+    <button onclick="checkSpam()">Check for spam</button>
+    <br>
+    <h2>Results:</h2>
+    <div id="results"></div>
+    <script>
+        const spamList = {
+            urgency: ["word1", "word2", "word3"],
+            shady: ["word4", "word5", "word6"],
+            money: ["word7", "word8", "word9"],
+            overpromise: ["word10", "word11", "word12"]
+        };
+
+        function checkSpam() {
+            const emailText = document.getElementById("emailText").value.toLowerCase();
+            const resultsElement = document.getElementById("results");
+            resultsElement.innerHTML = "";
+            let counts = {urgency: 0, shady: 0, money: 0, overpromise: 0};
+
+            for (const category in spamList) {
+                spamList[category].forEach(word => {
+                    const regex = new RegExp('\\b' + word + '\\b', 'gi');
+                    const matches = emailText.match(regex);
+                    if (matches) {
+                        counts[category] += matches.length;
+                        emailText = emailText.replace(regex, `<span class="${category}">${word}</span>`);
+                    }
+                });
+            }
+
+            resultsElement.innerHTML = emailText.replace(/\n/g, "<br>");
+
+            for (const category in counts) {
+                const countElement = document.createElement("p");
+                countElement.innerText = `Number of ${category} spam words detected: ${counts[category]}`;
+                resultsElement.appendChild(countElement);
+            }
+        }
+    </script>
+</body>
+</html>
